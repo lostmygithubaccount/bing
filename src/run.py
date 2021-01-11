@@ -19,13 +19,15 @@ parser.add_argument("--boosting", type=str, default="gbdt")
 parser.add_argument("--num_iterations", type=int, default=100)
 parser.add_argument("--learning_rate", type=float, default=0.1)
 parser.add_argument("--num_leaves", type=int, default=31)
-parser.add_argument("--nodes", type=int, default=64)
+parser.add_argument("--nodes", type=int, default=10)
+parser.add_argument("--cpus", type=int, default=16)
 args = parser.parse_args()
 
 # distributed setup
 print("initializing...")
-initialize()
+initialize(nthreads=args.cpus)
 c = Client()
+print(c.dashboard_link)
 print(c)
 
 # get data
@@ -41,7 +43,7 @@ storage_options = {"account_name": ds.account_name, "account_key": ds.account_ke
 print("creating dataframes...")
 df = dd.read_csv(
     f"az://{container_name}/{args.filename}", storage_options=storage_options, sep="\t"
-).repartition(npartitions=args.nodes)
+).repartition(npartitions=args.nodes * args.cpus * 2)
 print(df)
 
 # data processing
