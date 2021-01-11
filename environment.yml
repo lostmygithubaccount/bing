@@ -1,0 +1,17 @@
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - pip
+  - pip:
+    - https://default7955323798.blob.core.windows.net/publictestwheels/azureml_core-0.1.0.0-py3-none-any.whl # azureml-core
+    - https://default7955323798.blob.core.windows.net/publictestwheels/azureml_mlflow-0.1.0.0-py3-none-any.whl # azureml-mlflow
+    - pandas
+    - lightgbm
+    - dask-lightgbm
+    - dask==2.30.0 
+    - distributed==2.30.0
+    - adlfs
+    - fastparquet
+    - mpi4py
+    - dask-mpi
