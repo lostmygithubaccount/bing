@@ -2,7 +2,6 @@
 import mlflow
 import argparse
 
-import pandas as pd
 import lightgbm as lgbm
 import dask.dataframe as dd
 
@@ -16,13 +15,14 @@ if __name__ == "__main__":
 
     # argparse setup
     parser = argparse.ArgumentParser()
-    parser.add_argument("--filename", type=str)
+    parser.add_argument("--input", type=str)
     parser.add_argument("--boosting", type=str, default="gbdt")
     parser.add_argument("--num_iterations", type=int, default=100)
     parser.add_argument("--learning_rate", type=float, default=0.1)
     parser.add_argument("--num_leaves", type=int, default=31)
     parser.add_argument("--nodes", type=int, default=10)
     parser.add_argument("--cpus", type=int, default=16)
+    parser.add_argument("--silent", type=bool, default=False)
     args = parser.parse_args()
 
     # distributed setup
@@ -37,14 +37,15 @@ if __name__ == "__main__":
 
     run = Run.get_context()
     ws = run.experiment.workspace
-    ds = ws.get_default_datastore()
+    # ds = ws.get_default_datastore()
+    ds = ws.datastores["aml1pds"]
     container_name = ds.container_name
     storage_options = {"account_name": ds.account_name, "account_key": ds.account_key}
 
     # read into dataframes
     print("creating dataframes...")
     df = dd.read_parquet(
-        f"az://{container_name}/{args.filename}", storage_options=storage_options
+        f"az://{container_name}/{args.input}", storage_options=storage_options
     )
     print(df)
 
@@ -63,6 +64,7 @@ if __name__ == "__main__":
         "num_iterations": args.num_iterations,
         "learning_rate": args.learning_rate,
         "num_leaves": args.num_leaves,
+        "silent": args.silent,
     }
 
     model = LGBMRegressor(**params)

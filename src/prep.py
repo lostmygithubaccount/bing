@@ -2,7 +2,6 @@
 import mlflow
 import argparse
 
-import pandas as pd
 import dask.dataframe as dd
 
 from distributed import Client
@@ -26,7 +25,8 @@ if __name__ == "__main__":
 
     run = Run.get_context()
     ws = run.experiment.workspace
-    ds = ws.get_default_datastore()
+    # ds = ws.get_default_datastore()
+    ds = ws.datastores["aml1pds"]
     container_name = ds.container_name
     storage_options = {"account_name": ds.account_name, "account_key": ds.account_key}
 
@@ -48,6 +48,7 @@ if __name__ == "__main__":
 
     # writing data
     print("writing data...")
+    print(c)
     df.repartition(npartitions=args.npartitions).to_parquet(
         f"az://{container_name}/{args.output}",
         storage_options=storage_options,
