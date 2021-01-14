@@ -25,8 +25,7 @@ if __name__ == "__main__":
 
     run = Run.get_context()
     ws = run.experiment.workspace
-    # ds = ws.get_default_datastore()
-    ds = ws.datastores["aml1pds"]
+    ds = ws.get_default_datastore()
     container_name = ds.container_name
     storage_options = {"account_name": ds.account_name, "account_key": ds.account_key}
 
